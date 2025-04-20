@@ -23,7 +23,6 @@ public class ScreenShot
         window.Topmost = true;
         window.Owner = ownerWindow;
         window.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
-        window.WindowState = System.Windows.WindowState.Maximized;
         window.WindowStyle = System.Windows.WindowStyle.None;
 
         var rect = new System.Windows.Shapes.Rectangle();
@@ -36,6 +35,8 @@ public class ScreenShot
         window.Loaded += (o, e) =>
         {
             window.Activate();
+            //マルチスクリーンで、windowのポジションが確定された後で、サーズが最大にする
+            window.WindowState = System.Windows.WindowState.Maximized;
         };
 
         resolutionMesureWindow = window;

@@ -76,6 +76,14 @@ public partial class ScreenShotWorkWindow : Window
         this.desktopImage.Source = screenShot.fullScreenShotImage;
         this.Loaded += (o, e) =>
         {
+            this.Activate();
+            //マルチスクリーンで、windowのポジションが確定された後で、サーズが最大にする
+            this.WindowState = System.Windows.WindowState.Maximized;
+        };
+
+        //　myCanvas.LoadedはwindowのLoadedイベントの後で呼び出される
+        myCanvas.Loaded += (o, e) =>
+        {
             Console.WriteLine($"window loaded {this.Left} {this.Top} {this.Width} {this.Height}, canvas {myCanvas.ActualHeight} {myCanvas.ActualWidth}");
 
             backgroundLeftTop = new Point(-myCanvas.ActualWidth, -myCanvas.ActualHeight);
@@ -83,8 +91,6 @@ public partial class ScreenShotWorkWindow : Window
             backgroundLeftDown = new Point(-myCanvas.ActualWidth, myCanvas.ActualHeight * 2);
             backgroundRightDown = new Point(myCanvas.ActualWidth * 2, myCanvas.ActualHeight * 2);
             polygonBackground.Points = new PointCollection([backgroundLeftTop, backgroundRightTop, backgroundRightDown, backgroundLeftDown]);
-
-            this.Activate();
         };
 
         myCanvas.MouseDown += MouseDownHandle;
