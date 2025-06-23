@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:FreeScreenShot"
         mc:Ignorable="d"
         Title="Free screenshot"
-        Width="350"
-                Height="230"
+        Width="430"
+        Height="230"
         Icon="pack://application:,,,/Resource/icon.png">
         <Grid>
                 <Grid.RowDefinitions>
@@ -16,14 +16,14 @@
                         <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Button x:Name="startBtn"
-                                Grid.Row="0"
-                                Margin="4"
-                                FontSize="18">Start</Button>
+                        Grid.Row="0"
+                        Margin="4"
+                        FontSize="18">Start</Button>
                 <CheckBox x:Name="checkBoxAutoCopy"
-                                Grid.Row="1"
-                                Margin="4"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center">Auto copy to clipboard</CheckBox>
+                          Grid.Row="1"
+                          Margin="4"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center">Auto copy to clipboard</CheckBox>
                 <Border Background="White"
                         BorderBrush="Black"
                         BorderThickness="1"
@@ -32,11 +32,12 @@
                         Margin="4">
                         <TextBlock x:Name="textBlock">
                                 Usage:<LineBreak/>
-                                1) Click "Start" to take a screenshot. <LineBreak/>
-                                2) Press Esc or right-click to exit during screenshot.<LineBreak/>
-                                Version: <Bold>1.0.0</Bold> <LineBreak/>
+                                1) Please move this window to the screen that you want to capture. <LineBreak/>
+                                2) Click "Start" to take a screenshot. <LineBreak/>
+                                3) Press Esc or right-click to exit during screenshot.<LineBreak/>
+                                Version: <Bold>1.0.1</Bold> <LineBreak/>
                                 github: <Hyperlink NavigateUri="https://github.com/mgyrider/FreeScreenShot"
-                                                RequestNavigate="Hyperlink_RequestNavigate">
+                                                   RequestNavigate="Hyperlink_RequestNavigate">
                                         https://github.com/mgyrider/FreeScreenShot
                                 </Hyperlink>
                         </TextBlock>

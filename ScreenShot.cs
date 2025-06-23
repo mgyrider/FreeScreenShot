@@ -4,6 +4,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Windows.Forms;
 
 namespace FreeScreenShot;
 
@@ -28,8 +29,7 @@ public class ScreenShot
         var rect = new System.Windows.Shapes.Rectangle();
         rect.Fill = System.Windows.Media.Brushes.Black;
         rect.Stroke = System.Windows.Media.Brushes.LimeGreen;
-        rect.StrokeThickness = 1;
-        rect.Loaded += LoadedEventHandler;
+        rect.StrokeThickness = 4;
         window.Content = rect;
 
         window.Loaded += (o, e) =>
@@ -38,16 +38,102 @@ public class ScreenShot
             //マルチスクリーンで、windowのポジションが確定された後で、サーズが最大にする
             window.WindowState = System.Windows.WindowState.Maximized;
         };
+        window.Loaded += LoadedEventHandler;
 
         resolutionMesureWindow = window;
         this.ownerWindowPosX = ownerWindow.Left;
         this.ownerWindowPosY = ownerWindow.Top;
     }
 
+    (int, int) getTargetWidthArea(Bitmap screeShot, int high, int down, int callTimes)
+    {
+        int y = (high + down) / 2;
+        int status = 0;
+        int left = 0;
+        int right = 0;
+        int blackCount = 0;
+        if (callTimes >= 5)
+        {
+            return (0, 0);
+        }
+        for (int x = 0; x < screeShot.Width; x++)
+        {
+            var color = screeShot.GetPixel(x, y);
+            if ((status == 0) && (color.ToArgb() == Color.LimeGreen.ToArgb()))
+            {
+                status = 1;
+                left = x;
+            }
+            else if ((status == 1) && (color.ToArgb() == Color.Black.ToArgb()))
+            {
+                blackCount++;
+            }
+            else if ((status == 1) && (color.ToArgb() == Color.LimeGreen.ToArgb()))
+            {
+                if ((double)blackCount / (x - left) > 0.9)
+                {
+                    right = x;
+                }
+            }
+        }
+        if (right > left)
+        {
+            return (left, right);
+        }
+        (left, right) = getTargetWidthArea(screeShot, high, y, callTimes + 1);
+        if (right > left)
+        {
+            return (left, right);
+        }
+        return getTargetWidthArea(screeShot, y, down, callTimes + 1);
+    }
+
+    (int, int) getTargetHeightArea(Bitmap screeShot, int left, int right, int callTimes)
+    {
+        int x = (left + right) / 2;
+        int status = 0;
+        int top = 0;
+        int down = 0;
+        int blackCount = 0;
+        if (callTimes >= 10)
+        {
+            return (0, 0);
+        }
+        for (int y = 0; y < screeShot.Height; y++)
+        {
+            var color = screeShot.GetPixel(x, y);
+            if ((status == 0) && (color.ToArgb() == Color.LimeGreen.ToArgb()))
+            {
+                status = 1;
+                top = y;
+            }
+            else if ((status == 1) && (color.ToArgb() == Color.Black.ToArgb()))
+            {
+                blackCount++;
+            }
+            else if ((status == 1) && (color.ToArgb() == Color.LimeGreen.ToArgb()))
+            {
+                if ((double)blackCount / (y - top) > 0.9)
+                {
+                    down = y;
+                }
+            }
+        }
+        if (down > top)
+        {
+            return (top, down);
+        }
+        (top, down) = getTargetHeightArea(screeShot, left, x, callTimes + 1);
+        if (down > top)
+        {
+            return (top, down);
+        }
+        return getTargetHeightArea(screeShot, x, right, callTimes + 1);
+    }
+
     async void LoadedEventHandler(object sender, System.Windows.RoutedEventArgs e)
     {
         await System.Threading.Tasks.Task.Delay(200);
-        const int MAX_LEN = 10000;
 
         var black = System.Drawing.Color.Black;
         int left = 0, right = 0, top = 0, bottom = 0;
@@ -55,56 +141,22 @@ public class ScreenShot
         // WPFのAPI（例えば、System.Windows.Forms.Screen.AllScreens）には、マルチスクリーン環境でbugがあるようです。
         // 正しい結果が得られないため、下記のように自分でスクリーンのサイズを測定します。
 
-        // スクリーンの幅を測定する
-        Bitmap pixelsOfX = new Bitmap(MAX_LEN + MAX_LEN, 1, PixelFormat.Format32bppArgb);
-        using (Graphics graphics = Graphics.FromImage(pixelsOfX))
+        // Create a bitmap of the appropriate size to receive the screenshot.
+        Bitmap screeShot = new Bitmap(SystemInformation.VirtualScreen.Width, SystemInformation.VirtualScreen.Height, PixelFormat.Format32bppPArgb);
+        // Draw the screenshot into our bitmap.
+        using (Graphics g = Graphics.FromImage(screeShot))
         {
-            graphics.CopyFromScreen((int)ownerWindowPosX - MAX_LEN, (int)ownerWindowPosY, 0, 0, pixelsOfX.Size);
-            int index = MAX_LEN;
-            for (index = MAX_LEN; index < pixelsOfX.Width; index++)
-            {
-                var color = pixelsOfX.GetPixel(index, 0);
-                if (color.A != black.A || color.R != black.R || color.G != black.G || color.B != black.B)
-                {
-                    right = (int)ownerWindowPosX + (index - MAX_LEN);
-                    break;
-                }
-            }
-            for (index = MAX_LEN; index >= 0; index--)
-            {
-                var color = pixelsOfX.GetPixel(index, 0);
-                if (color.A != black.A || color.R != black.R || color.G != black.G || color.B != black.B)
-                {
-                    left = (int)ownerWindowPosX - (MAX_LEN - index);
-                    break;
-                }
-            }
+            g.CopyFromScreen(SystemInformation.VirtualScreen.Left, SystemInformation.VirtualScreen.Top, 0, 0, screeShot.Size);
         }
 
-        // スクリーンの高さを測定する
-        Bitmap pixelsOfY = new Bitmap(1, MAX_LEN + MAX_LEN, PixelFormat.Format32bppArgb);
-        using (Graphics graphics = Graphics.FromImage(pixelsOfY))
+        (left, right) = getTargetWidthArea(screeShot, 0, screeShot.Height, 0);
+        System.Console.WriteLine($"left right {left} {right} {right - left}");
+        (top, bottom) = getTargetHeightArea(screeShot, left, right, 0);
+        System.Console.WriteLine($"top bottom {top} {bottom} {bottom - top}");
+
+        if (left >= right || top >= bottom)
         {
-            graphics.CopyFromScreen((int)ownerWindowPosX, (int)ownerWindowPosY - MAX_LEN, 0, 0, pixelsOfY.Size);
-            int index = MAX_LEN;
-            for (index = MAX_LEN; index < pixelsOfY.Height; index++)
-            {
-                var color = pixelsOfY.GetPixel(0, index);
-                if (color.A != black.A || color.R != black.R || color.G != black.G || color.B != black.B)
-                {
-                    bottom = (int)ownerWindowPosY + (index - MAX_LEN);
-                    break;
-                }
-            }
-            for (index = MAX_LEN; index >= 0; index--)
-            {
-                var color = pixelsOfY.GetPixel(0, index);
-                if (color.A != black.A || color.R != black.R || color.G != black.G || color.B != black.B)
-                {
-                    top = (int)ownerWindowPosY - (MAX_LEN - index);
-                    break;
-                }
-            }
+            MessageBox.Show($"Error ${left} {right} {top} {bottom}");
         }
 
         this.fullScreenRect = new System.Drawing.Rectangle(left, top, right - left + 1, bottom - top + 1);
