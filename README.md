@@ -1,61 +1,62 @@
+🌸[日本語のREADMEはこちら](./README.ja.md)
 
-## 目次
-- [概要](#概要)
-  - [既存アプリとの比較](#既存アプリとの比較)
-  - [用途](#用途)
-- [特徴](#特徴)
-- [ビルド](#ビルド)
-  - [リリース](#リリース)
+## Table of Contents
+- [Overview](#overview)  
+  - [Comparison with Existing Applications](#comparison-with-existing-applications)  
+  - [Use Cases](#use-cases)  
+- [Features](#features)  
+- [Build](#build)  
+  - [Release](#release)
 
-# 概要
-本ソフトウェアは、PC上でスクリーンショットを取得し、選択範囲の角度を360度自由に回転できるWPFベースのデスクトップアプリケーションです。直感的な操作でスクリーンショットの編集を行うことができます。
+# Overview
+This software is a WPF-based desktop application that allows users to take screenshots on a PC and freely rotate the selected area at any angle (360 degrees). It enables intuitive editing of screenshots.
 
-## 既存アプリとの比較
-
+## Comparison with Existing Applications
 
 <img src="Picture/pisanosyatou.jpg" width="20%">
 
-ピサの斜塔の写真を切り取る例を用いて、既存アプリとの比較を通じて、本アプリのメリットをご紹介いたします。
-|  | 既存アプリ | 本アプリ |
+Using an example of cropping a photo of the Leaning Tower of Pisa, we will illustrate the advantages of this application over existing ones.
+
+|  | Existing Applications | This Application |
 |------|:------:|:------:|
-| 操作 | 長方形の範囲しか選択できません</br><img src="Picture/p1.png" width="80%"> | 長方形の範囲を選択し、回転・調整することができます</br><img src="Picture/p3.png" width="80%">  |
-| 結果 | 斜めに切り取られてしまいます</br><img src="Picture/p2.png" width="100"> | 正しい位置で切り取ることができます</br><img src="Picture/p4.png" width="90"> |
+| Operation | Can only select rectangular areas</br><img src="Picture/p1.png" width="80%"> | Allows selection of rectangular areas and enables rotation/adjustment</br><img src="Picture/p3.png" width="80%">  |
+| Result | Cropped at an angle</br><img src="Picture/p2.png" width="100"> | Can be cropped at the correct angle</br><img src="Picture/p4.png" width="90"> |
 
+## Use Cases
+Suppose a web page contains a diagram that appears tilted. How can you capture a screenshot of this diagram in a straightened form?
 
-## 用途
-例えば、下記のウェブページに斜めな図表があるとします、この図表をまっすぐに表示した状態でスクリーンショットするには、どうすればよいでしょうか？
-
-本ソフトウェアを使えば、不要な部分を含めずに、図表だけをぴったり選択してスクリーンショットできます。
+With this software, you can accurately select only the desired diagram—excluding unnecessary areas—and capture it as a clean screenshot.
 
 <img src="Picture/screenshotApp1.png" width="80%">
 
-結果は下記のように表示されます、クリップボードにコピーしたり、PNGファイルとして保存したりすることが可能です。
+The result will be displayed as shown below. You can copy it to the clipboard or save it as a PNG file.
 
 <img src="Picture/screenshotApp2.png" width="50%">
 
 </br>
 
-# 特徴
-- スクリーンショットの取得（マルチスクリーン対応）
-
-- 選択範囲の編集（サイズ調整・360度回転）
-
-- 画像の保存（PNG形式）及びクリップボードコピー
+# Features
+- Capture screenshots (multi-monitor support)  
+- Edit selected areas (resize and 360-degree rotation)  
+- Save images (PNG format) and copy to clipboard  
 
 </br>
 
-# 動作環境
-- 対応OS: Windows 10 / 11
-- 開発環境: .NET 8 以上 / C#（WPF）
+# System Requirements
+- Supported OS: Windows 10 / 11  
+- Development Environment: .NET 8 or later / C# (WPF)
 
 </br>
 
-# ビルド
-プロジェクトのフォルダーで、以下のコマンドを実行します。
+# Build
+Run the following command in the project folder:
 
-```dotnet run```
+```bash
+dotnet run
+```
 
-## リリース
-win-x64プラットフォームを例にすると、リリース用のコマンドは以下のとおりです。
- 
-```dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true /p:SelfContained=true```
+# Release
+To publish for the win-x64 platform, use the following command:
+```bash
+dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true /p:SelfContained=true
+```
